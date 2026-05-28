@@ -38,6 +38,29 @@ create table if not exists public.leads_nutricionista (
 
 alter table public.leads_nutricionista enable row level security;
 
+revoke all on public.leads_nutricionista from anon;
+revoke all on public.leads_nutricionista from authenticated;
+
+grant usage on schema public to anon, authenticated;
+grant insert (
+  nome,
+  whatsapp,
+  email,
+  cidade,
+  bairro,
+  objetivo,
+  acompanhamento_atual,
+  restricao_alimentar,
+  condicao_saude,
+  rotina_alimentar,
+  preferencia_atendimento,
+  melhor_horario,
+  mensagem_adicional,
+  consentimento_lgpd
+) on public.leads_nutricionista to anon;
+
+grant select on public.leads_nutricionista to authenticated;
+
 drop policy if exists "Permitir insert publico de leads autorizados" on public.leads_nutricionista;
 create policy "Permitir insert publico de leads autorizados"
 on public.leads_nutricionista
@@ -45,6 +68,7 @@ for insert
 to anon
 with check (
   consentimento_lgpd = true
+  and status = 'novo'
   and nome is not null
   and length(trim(nome)) > 1
   and whatsapp is not null

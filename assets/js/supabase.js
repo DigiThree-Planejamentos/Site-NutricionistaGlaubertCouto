@@ -20,17 +20,16 @@
       throw new Error("Configure SUPABASE_URL e SUPABASE_ANON_KEY em assets/js/config.js antes de enviar leads.");
     }
 
-    const { data, error } = await client
+    // Nao usamos .select() aqui para manter o fluxo publico apenas com permissao de insert.
+    const { error } = await client
       .from("leads_nutricionista")
-      .insert([leadData])
-      .select("id")
-      .single();
+      .insert([leadData]);
 
     if (error) {
       throw error;
     }
 
-    return data;
+    return true;
   }
 
   window.SupabaseLeadService = {

@@ -195,9 +195,7 @@ textarea {
   min-height: calc(100vh - var(--header-height));
   display: flex;
   align-items: center;
-  background:
-    linear-gradient(105deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 48%, rgba(238, 245, 240, 0.9) 100%),
-    url("../img/.gitkeep");
+  background: linear-gradient(105deg, rgba(251, 250, 247, 0.98) 0%, rgba(251, 250, 247, 0.92) 48%, rgba(238, 245, 240, 0.9) 100%);
   padding: 86px 0 72px;
 }
 

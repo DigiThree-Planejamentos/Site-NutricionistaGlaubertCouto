@@ -9,14 +9,27 @@
     return String(formData.get(field) || "").trim();
   }
 
+  function getOptionalValue(formData, field) {
+    const value = getValue(formData, field);
+    return value || null;
+  }
+
+  function displayValue(value) {
+    return value || "Não informado";
+  }
+
   function setFeedback(message, type) {
     feedback.textContent = message;
     feedback.className = `form-feedback ${type || ""}`.trim();
   }
 
   function validateLead(lead) {
+    const phoneDigits = lead.whatsapp.replace(/\D/g, "");
+
     if (!lead.nome) return "Informe seu nome completo.";
     if (!lead.whatsapp) return "Informe seu WhatsApp.";
+    if (phoneDigits.length < 10) return "Informe um WhatsApp válido, com DDD.";
+    if (lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) return "Informe um e-mail válido ou deixe o campo em branco.";
     if (!lead.objetivo) return "Selecione seu principal objetivo.";
     if (!lead.consentimento_lgpd) return "Para enviar, marque a autorização de armazenamento dos dados.";
     return "";
@@ -26,17 +39,17 @@
     return {
       nome: getValue(formData, "nome"),
       whatsapp: getValue(formData, "whatsapp"),
-      email: getValue(formData, "email"),
-      cidade: getValue(formData, "cidade"),
-      bairro: getValue(formData, "bairro"),
+      email: getOptionalValue(formData, "email"),
+      cidade: getOptionalValue(formData, "cidade"),
+      bairro: getOptionalValue(formData, "bairro"),
       objetivo: getValue(formData, "objetivo"),
-      acompanhamento_atual: getValue(formData, "acompanhamento_atual"),
-      restricao_alimentar: getValue(formData, "restricao_alimentar"),
-      condicao_saude: getValue(formData, "condicao_saude"),
-      rotina_alimentar: getValue(formData, "rotina_alimentar"),
-      preferencia_atendimento: getValue(formData, "preferencia_atendimento"),
-      melhor_horario: getValue(formData, "melhor_horario"),
-      mensagem_adicional: getValue(formData, "mensagem_adicional"),
+      acompanhamento_atual: getOptionalValue(formData, "acompanhamento_atual"),
+      restricao_alimentar: getOptionalValue(formData, "restricao_alimentar"),
+      condicao_saude: getOptionalValue(formData, "condicao_saude"),
+      rotina_alimentar: getOptionalValue(formData, "rotina_alimentar"),
+      preferencia_atendimento: getOptionalValue(formData, "preferencia_atendimento"),
+      melhor_horario: getOptionalValue(formData, "melhor_horario"),
+      mensagem_adicional: getOptionalValue(formData, "mensagem_adicional"),
       consentimento_lgpd: formData.get("consentimento_lgpd") === "on"
     };
   }
@@ -46,18 +59,18 @@
 
 Meus dados:
 Nome: ${lead.nome}
-Cidade/Bairro: ${[lead.cidade, lead.bairro].filter(Boolean).join(" / ")}
+Cidade/Bairro: ${displayValue([lead.cidade, lead.bairro].filter(Boolean).join(" / "))}
 WhatsApp: ${lead.whatsapp}
-E-mail: ${lead.email}
+E-mail: ${displayValue(lead.email)}
 
 Objetivo principal: ${lead.objetivo}
-Acompanhamento nutricional atual: ${lead.acompanhamento_atual}
-Restrição alimentar: ${lead.restricao_alimentar}
-Condição de saúde importante: ${lead.condicao_saude}
-Rotina alimentar: ${lead.rotina_alimentar}
-Preferência de atendimento: ${lead.preferencia_atendimento}
-Melhor horário para contato: ${lead.melhor_horario}
-Mensagem adicional: ${lead.mensagem_adicional}
+Acompanhamento nutricional atual: ${displayValue(lead.acompanhamento_atual)}
+Restrição alimentar: ${displayValue(lead.restricao_alimentar)}
+Condição de saúde importante: ${displayValue(lead.condicao_saude)}
+Rotina alimentar: ${displayValue(lead.rotina_alimentar)}
+Preferência de atendimento: ${displayValue(lead.preferencia_atendimento)}
+Melhor horário para contato: ${displayValue(lead.melhor_horario)}
+Mensagem adicional: ${displayValue(lead.mensagem_adicional)}
 
 Aguardo seu retorno para agendarmos.`;
   }
@@ -93,10 +106,9 @@ Aguardo seu retorno para agendarmos.`;
       }, 600);
     } catch (error) {
       console.error(error);
-      setFeedback(error.message || "Não foi possível enviar agora. Tente novamente em alguns instantes.", "error");
-    } finally {
       submitButton.disabled = false;
       submitButton.textContent = "Enviar pré-agendamento";
+      setFeedback(error.message || "Não foi possível enviar agora. Tente novamente em alguns instantes.", "error");
     }
   });
 })();
