@@ -62,7 +62,7 @@ whatsapp: "5524000000000"
 
 ## Fluxo do formulário
 
-1. O usuário preenche os dados de pré-agendamento.
+1. O usuário preenche os dados de cadastro.
 2. O JavaScript valida nome, WhatsApp, objetivo e consentimento LGPD.
 3. O lead é salvo na tabela `leads_nutricionista`.
 4. Se o Supabase confirmar o insert, a mensagem é montada automaticamente.

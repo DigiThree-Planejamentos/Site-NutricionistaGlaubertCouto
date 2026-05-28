@@ -107,7 +107,7 @@ Aguardo seu retorno para agendarmos.`;
     } catch (error) {
       console.error(error);
       submitButton.disabled = false;
-      submitButton.textContent = "Enviar pré-agendamento";
+      submitButton.textContent = "Enviar cadastro";
       setFeedback(error.message || "Não foi possível enviar agora. Tente novamente em alguns instantes.", "error");
     }
   });
