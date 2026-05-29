@@ -169,6 +169,53 @@ textarea {
   transform: translateY(-1px);
 }
 
+.btn:focus-visible {
+  outline: 3px solid rgba(183, 139, 82, 0.45);
+  outline-offset: 3px;
+}
+
+.btn-animated {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-animated span {
+  position: relative;
+  z-index: 1;
+  color: #f4dcae;
+  transition: color 0.4s ease;
+}
+
+.btn-animated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 120%;
+  left: -10%;
+  background: var(--color-primary-dark);
+  transform: skew(30deg);
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+}
+
+.btn.btn-animated:hover,
+.btn.btn-animated:focus-visible {
+  background: var(--color-primary);
+}
+
+.btn.btn-animated:hover span,
+.btn.btn-animated:focus-visible span {
+  color: #fff;
+}
+
+.btn.btn-animated:hover::before,
+.btn.btn-animated:focus-visible::before {
+  transform: translate3d(100%, 0, 0) skew(30deg);
+}
+
 .btn-primary {
   background: var(--color-primary);
   color: #fff;
