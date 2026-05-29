@@ -3,7 +3,7 @@ window.APP_CONFIG = {
   profissional: {
     nome: "Glaubert Couto",
     profissao: "Nutricionista",
-    instagram: "cb.freedom",
+    instagram: "gcoutonutri",
     whatsapp: "5524999242551"
   },
   textos: {
