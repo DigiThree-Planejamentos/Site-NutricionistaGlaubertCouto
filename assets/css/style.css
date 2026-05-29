@@ -199,6 +199,16 @@ textarea {
   padding: 86px 0 72px;
 }
 
+.hero-title {
+  max-width: 920px;
+  margin: 0 auto 54px;
+  text-align: center;
+}
+
+.hero-title h1 {
+  margin-inline: auto;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
@@ -253,7 +263,7 @@ h3 {
 
 .hero-text {
   max-width: 650px;
-  margin: 24px 0 0;
+  margin: 0;
 }
 
 .hero-actions {
@@ -612,6 +622,18 @@ textarea:focus {
   .split,
   .form-layout {
     grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    margin-bottom: 36px;
+  }
+
+  .hero-media {
+    order: 1;
+  }
+
+  .hero-content {
+    order: 2;
   }
 
   .hero-media {
