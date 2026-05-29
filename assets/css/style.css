@@ -235,12 +235,6 @@ h1 {
   max-width: 820px;
 }
 
-#inicio .hero-content > h1 {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
 h2 {
   font-size: clamp(2rem, 4vw, 3.2rem);
 }
@@ -259,11 +253,7 @@ h3 {
 
 .hero-text {
   max-width: 650px;
-  margin: 24px auto 0;
-}
-
-#inicio .hero-content > .hero-text {
-  text-align: center;
+  margin: 24px 0 0;
 }
 
 .hero-actions {
