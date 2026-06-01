@@ -256,6 +256,22 @@ textarea {
   margin-inline: auto;
 }
 
+.hero-title.is-visible .hero-title-animated {
+  animation: hero-title-soft-entry 720ms ease-out both;
+}
+
+@keyframes hero-title-soft-entry {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
@@ -744,6 +760,12 @@ textarea:focus {
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title.is-visible .hero-title-animated {
+    animation: none;
+  }
 }
 
 @media (max-width: 940px) {
