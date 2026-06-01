@@ -4,6 +4,7 @@
   const navLinks = document.querySelectorAll(".nav-links a");
   const whatsappLinks = document.querySelectorAll(".js-whatsapp-link");
   const instagramLinks = document.querySelectorAll(".js-instagram-link");
+  const instagramAnimations = document.querySelectorAll("[data-lottie-instagram]");
   const revealItems = document.querySelectorAll(".reveal");
 
   function setMenu(open) {
@@ -35,6 +36,18 @@
   instagramLinks.forEach(function (link) {
     link.href = `https://www.instagram.com/${config.profissional.instagram}/`;
   });
+
+  if (window.lottie) {
+    instagramAnimations.forEach(function (container) {
+      window.lottie.loadAnimation({
+        container,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "assets/lottie/instagram.json"
+      });
+    });
+  }
 
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(function (entries) {
