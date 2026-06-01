@@ -256,8 +256,13 @@ textarea {
   margin-inline: auto;
 }
 
+.hero-title-animated {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
 .hero-title.is-visible .hero-title-animated {
-  animation: hero-title-soft-entry 720ms ease-out both;
+  animation: hero-title-soft-entry 950ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
 }
 
 @keyframes hero-title-soft-entry {
@@ -763,6 +768,11 @@ textarea:focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-title-animated {
+    opacity: 1;
+    transform: none;
+  }
+
   .hero-title.is-visible .hero-title-animated {
     animation: none;
   }
