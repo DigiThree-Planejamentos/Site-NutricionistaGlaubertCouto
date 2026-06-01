@@ -5,6 +5,7 @@
   const whatsappLinks = document.querySelectorAll(".js-whatsapp-link");
   const instagramLinks = document.querySelectorAll(".js-instagram-link");
   const whatsappAnimations = document.querySelectorAll("[data-lottie-whatsapp]");
+  const whatsappFloatAnimations = document.querySelectorAll("[data-lottie-whatsapp-float]");
   const instagramAnimations = document.querySelectorAll("[data-lottie-instagram]");
   const revealItems = document.querySelectorAll(".reveal");
 
@@ -46,6 +47,16 @@
         loop: true,
         autoplay: true,
         path: "assets/lottie/whatsapp.json"
+      });
+    });
+
+    whatsappFloatAnimations.forEach(function (container) {
+      window.lottie.loadAnimation({
+        container,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "assets/lottie/whatsapp-float.json"
       });
     });
 
