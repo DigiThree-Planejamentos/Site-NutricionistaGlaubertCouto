@@ -258,17 +258,14 @@ textarea {
 
 .hero-title-animated {
   opacity: 0;
-  transform: translateY(16px);
-}
-
-.hero-title.is-visible .hero-title-animated {
-  animation: hero-title-soft-entry 950ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  transform: translateY(28px);
+  animation: hero-title-soft-entry 1400ms cubic-bezier(0.22, 1, 0.36, 1) 260ms both;
 }
 
 @keyframes hero-title-soft-entry {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(28px);
   }
 
   to {
@@ -771,9 +768,6 @@ textarea:focus {
   .hero-title-animated {
     opacity: 1;
     transform: none;
-  }
-
-  .hero-title.is-visible .hero-title-animated {
     animation: none;
   }
 }
