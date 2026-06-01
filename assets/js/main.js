@@ -4,6 +4,7 @@
   const navLinks = document.querySelectorAll(".nav-links a");
   const whatsappLinks = document.querySelectorAll(".js-whatsapp-link");
   const instagramLinks = document.querySelectorAll(".js-instagram-link");
+  const whatsappAnimations = document.querySelectorAll("[data-lottie-whatsapp]");
   const instagramAnimations = document.querySelectorAll("[data-lottie-instagram]");
   const revealItems = document.querySelectorAll(".reveal");
 
@@ -38,6 +39,16 @@
   });
 
   if (window.lottie) {
+    whatsappAnimations.forEach(function (container) {
+      window.lottie.loadAnimation({
+        container,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "assets/lottie/whatsapp.json"
+      });
+    });
+
     instagramAnimations.forEach(function (container) {
       window.lottie.loadAnimation({
         container,

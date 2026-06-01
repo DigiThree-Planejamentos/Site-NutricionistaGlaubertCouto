@@ -494,6 +494,7 @@ h3 {
   font-weight: 750;
 }
 
+.social-link,
 .instagram-link {
   display: inline-flex;
   align-items: center;
@@ -501,7 +502,7 @@ h3 {
   width: fit-content;
 }
 
-.instagram-lottie {
+.social-lottie {
   width: 28px;
   height: 28px;
   flex: 0 0 28px;
