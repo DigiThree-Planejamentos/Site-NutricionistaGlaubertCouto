@@ -55,22 +55,23 @@
   }
 
   function buildWhatsAppMessage(lead) {
-    return `${config.textos.chamadaWhatsApp}
+    return `*${config.textos.chamadaWhatsApp}*
 
-Meus dados:
-Nome: ${lead.nome}
-Cidade/Bairro: ${displayValue([lead.cidade, lead.bairro].filter(Boolean).join(" / "))}
-WhatsApp: ${lead.whatsapp}
-E-mail: ${displayValue(lead.email)}
+*Meus dados*
 
-Objetivo principal: ${lead.objetivo}
-Acompanhamento nutricional atual: ${displayValue(lead.acompanhamento_atual)}
-Restrição alimentar: ${displayValue(lead.restricao_alimentar)}
-Condição de saúde importante: ${displayValue(lead.condicao_saude)}
-Rotina alimentar: ${displayValue(lead.rotina_alimentar)}
-Preferência de atendimento: ${displayValue(lead.preferencia_atendimento)}
-Melhor horário para contato: ${displayValue(lead.melhor_horario)}
-Mensagem adicional: ${displayValue(lead.mensagem_adicional)}
+*Nome:* ${lead.nome}
+*Cidade/Bairro:* ${displayValue([lead.cidade, lead.bairro].filter(Boolean).join(" / "))}
+*WhatsApp:* ${lead.whatsapp}
+*E-mail:* ${displayValue(lead.email)}
+
+*Objetivo principal:* ${lead.objetivo}
+*Acompanhamento nutricional atual:* ${displayValue(lead.acompanhamento_atual)}
+*Restrição alimentar:* ${displayValue(lead.restricao_alimentar)}
+*Condição de saúde importante:* ${displayValue(lead.condicao_saude)}
+*Rotina alimentar:* ${displayValue(lead.rotina_alimentar)}
+*Preferência de atendimento:* ${displayValue(lead.preferencia_atendimento)}
+*Melhor horário para contato:* ${displayValue(lead.melhor_horario)}
+*Mensagem adicional:* ${displayValue(lead.mensagem_adicional)}
 
 Aguardo seu retorno para agendarmos.`;
   }
