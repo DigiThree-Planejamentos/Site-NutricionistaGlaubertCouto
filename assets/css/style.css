@@ -214,14 +214,12 @@ textarea {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: var(--color-secondary);
-  color: #fff;
 }
 
 .btn-animated span {
   position: relative;
   z-index: 1;
-  color: var(--color-bg);
+  color: inherit;
   transition: color 0.4s ease;
 }
 
@@ -229,30 +227,33 @@ textarea {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   width: 120%;
   left: -10%;
-  background: var(--color-primary);
-  transform: skew(30deg);
+  background: var(--btn-hover-bg, var(--color-primary-dark));
+  transform: translate3d(-110%, 0, 0) skew(30deg);
   transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
 }
 
 .btn.btn-animated:hover,
 .btn.btn-animated:focus-visible {
-  background: var(--color-primary);
+  background: var(--btn-bg, var(--color-primary));
 }
 
 .btn.btn-animated:hover span,
 .btn.btn-animated:focus-visible span {
-  color: #fff;
+  color: var(--btn-hover-color, var(--color-bg));
 }
 
 .btn.btn-animated:hover::before,
 .btn.btn-animated:focus-visible::before {
-  transform: translate3d(100%, 0, 0) skew(30deg);
+  transform: translate3d(0, 0, 0) skew(30deg);
 }
 
 .btn-primary {
+  --btn-bg: var(--color-primary);
+  --btn-hover-bg: var(--color-primary-dark);
+  --btn-hover-color: var(--color-bg);
   background: var(--color-primary);
   color: var(--color-bg);
   box-shadow: 0 14px 32px rgba(25, 35, 79, 0.24);
@@ -263,6 +264,9 @@ textarea {
 }
 
 .btn-outline {
+  --btn-bg: rgba(244, 239, 225, 0.58);
+  --btn-hover-bg: var(--color-primary);
+  --btn-hover-color: var(--color-bg);
   color: var(--color-primary);
   border-color: var(--color-border);
   background: rgba(244, 239, 225, 0.58);

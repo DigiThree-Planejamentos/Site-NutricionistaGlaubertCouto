@@ -81,6 +81,16 @@ Aguardo seu retorno para agendarmos.`;
     window.location.href = url;
   }
 
+  function setSubmitButtonText(button, text) {
+    const label = button.querySelector("span");
+    if (label) {
+      label.textContent = text;
+      return;
+    }
+
+    button.textContent = text;
+  }
+
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -95,7 +105,7 @@ Aguardo seu retorno para agendarmos.`;
 
     try {
       submitButton.disabled = true;
-      submitButton.textContent = "Enviando...";
+      setSubmitButtonText(submitButton, "Enviando...");
       setFeedback("Salvando suas informações com segurança...", "");
 
       await window.SupabaseLeadService.insertLead(lead);
@@ -107,7 +117,7 @@ Aguardo seu retorno para agendarmos.`;
     } catch (error) {
       console.error(error);
       submitButton.disabled = false;
-      submitButton.textContent = "Enviar cadastro";
+      setSubmitButtonText(submitButton, "Enviar cadastro");
       setFeedback(error.message || "Não foi possível enviar agora. Tente novamente em alguns instantes.", "error");
     }
   });
