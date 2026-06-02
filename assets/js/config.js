@@ -8,7 +8,7 @@ window.APP_CONFIG = {
   },
   textos: {
     conceito: "Escuta que transforma, cuidado que permanece",
-    chamadaWhatsApp: "Olá, Glaubert! Vim pelo site e gostaria de agendar uma consulta nutricional."
+    chamadaWhatsApp: "Olá, Glaubert! Vim pelo site e gostaria de conversar sobre uma consulta nutricional."
   },
   supabase: {
     url: "https://essoicjbsshlqvzqcrsw.supabase.co",
