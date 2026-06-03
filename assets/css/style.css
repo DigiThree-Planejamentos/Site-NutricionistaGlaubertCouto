@@ -1358,6 +1358,10 @@ textarea:focus {
   border-top: 0;
 }
 
+.footer-links a {
+  color: #ffffff;
+}
+
 .footer-brand {
   background: var(--color-bg);
 }
