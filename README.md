@@ -7,6 +7,7 @@ Landing page em HTML, CSS e JavaScript puro para captação de leads de consulta
 ```text
 /
   index.html
+  politica-privacidade.html
   database.sql
   README.md
   assets/
@@ -15,7 +16,8 @@ Landing page em HTML, CSS e JavaScript puro para captação de leads de consulta
     js/supabase.js
     js/form.js
     js/main.js
-    img/.gitkeep
+    img/
+    lottie/
 ```
 
 ## Como abrir localmente
@@ -44,6 +46,24 @@ supabase: {
 
 Nunca coloque a chave `service_role` no frontend.
 
+### Segurança e RLS
+
+Mantenha o Row Level Security (RLS) ativo na tabela `leads_nutricionista`.
+
+O arquivo `database.sql` configura a tabela para permitir apenas `INSERT` público para o papel `anon`, exigindo consentimento LGPD.
+
+A configuração correta de policies é:
+
+- RLS ativo na tabela `leads_nutricionista`.
+- Apenas uma policy pública: `INSERT` para `anon` com o nome `Permitir envio publico de leads`.
+- Nenhuma policy de `SELECT` para `anon`.
+- Nenhuma policy de `SELECT` para `authenticated`.
+- Nenhuma policy pública de `UPDATE` ou `DELETE`.
+
+Por enquanto, a leitura dos leads deve ser feita apenas pelo painel administrativo do Supabase. Se futuramente for criado um painel administrativo próprio, ele deve ter autenticação e autorização adequadas antes de permitir acesso aos dados.
+
+Nunca exponha a chave `service_role` no frontend e não crie secret keys em arquivos públicos do site.
+
 ## Onde alterar dados principais
 
 Edite `assets/js/config.js` para mudar:
@@ -64,7 +84,7 @@ whatsapp: "5524000000000"
 
 1. O usuário preenche os dados de cadastro.
 2. O JavaScript valida nome, WhatsApp, objetivo e consentimento LGPD.
-3. O lead é salvo na tabela `leads_nutricionista`.
+3. O lead é salvo na tabela `leads_nutricionista` por uma policy de `INSERT` público.
 4. Se o Supabase confirmar o insert, a mensagem é montada automaticamente.
 5. O usuário é redirecionado para o WhatsApp via `wa.me`.
 
@@ -89,6 +109,8 @@ git push -u origin main
 
 ## Cuidados sobre LGPD e dados de saúde
 
-Este formulário coleta dados para contato, agendamento e triagem inicial. Evite pedir informações clínicas profundas na landing page. Mantenha a política de RLS ativa no Supabase, permita apenas insert público e não exponha dados dos leads no frontend.
+Este formulário coleta dados para contato, pré-agendamento, organização inicial do atendimento e acompanhamento da solicitação. Algumas informações podem estar relacionadas à saúde, como restrição alimentar, condição de saúde e rotina alimentar.
 
-Use os dados somente para a finalidade autorizada pelo usuário. Caso o projeto evolua, inclua uma política de privacidade completa e revise o fluxo com apoio jurídico especializado.
+Mantenha a política de RLS ativa no Supabase, permita apenas insert público para `anon` e não exponha dados dos leads no frontend. Não crie policy de `SELECT` para `anon` ou `authenticated`.
+
+Use os dados somente para a finalidade autorizada pelo usuário. A página `politica-privacidade.html` deve ser mantida atualizada com controlador, finalidade, retenção, direitos do titular e canal de contato. Caso o projeto evolua, revise o fluxo com apoio jurídico especializado.

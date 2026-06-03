@@ -9,8 +9,11 @@
 
   Segurança:
   - A tabela usa RLS.
-  - Visitantes do site podem apenas inserir leads.
+  - Visitantes do site podem apenas inserir leads com a role anon.
+  - Deve existir apenas uma policy publica: INSERT anon "Permitir envio publico de leads".
   - Leitura, atualização e exclusão públicas não são permitidas.
+  - Não crie policy de SELECT para anon ou authenticated nesta fase.
+  - A leitura dos leads deve ser feita apenas pelo painel administrativo do Supabase, por enquanto.
   - Nunca use service_role no frontend.
 */
 
@@ -41,7 +44,7 @@ alter table public.leads_nutricionista enable row level security;
 revoke all on public.leads_nutricionista from anon;
 revoke all on public.leads_nutricionista from authenticated;
 
-grant usage on schema public to anon, authenticated;
+grant usage on schema public to anon;
 grant insert (
   nome,
   whatsapp,
@@ -59,10 +62,14 @@ grant insert (
   consentimento_lgpd
 ) on public.leads_nutricionista to anon;
 
-grant select on public.leads_nutricionista to authenticated;
-
+drop policy if exists "Permitir envio publico de leads" on public.leads_nutricionista;
 drop policy if exists "Permitir insert publico de leads autorizados" on public.leads_nutricionista;
-create policy "Permitir insert publico de leads autorizados"
+drop policy if exists "Permitir leitura para usuarios autenticados" on public.leads_nutricionista;
+drop policy if exists "Permitir leitura para autenticados" on public.leads_nutricionista;
+drop policy if exists "Allow authenticated select" on public.leads_nutricionista;
+drop policy if exists "Enable read access for authenticated users" on public.leads_nutricionista;
+
+create policy "Permitir envio publico de leads"
 on public.leads_nutricionista
 for insert
 to anon
@@ -77,18 +84,8 @@ with check (
   and length(trim(objetivo)) > 1
 );
 
-/*
-  Opcional para uso interno autenticado:
-  Se voce criar usuarios no Supabase Auth para administrar leads, esta politica
-  permite leitura apenas para usuarios autenticados. Remova se preferir gerenciar
-  permissoes manualmente no painel.
-*/
-drop policy if exists "Permitir leitura para usuarios autenticados" on public.leads_nutricionista;
-create policy "Permitir leitura para usuarios autenticados"
-on public.leads_nutricionista
-for select
-to authenticated
-using (true);
+-- Não criar policy de SELECT para anon ou authenticated nesta fase.
+-- A leitura dos leads deve ser feita apenas pelo painel administrativo do Supabase, por enquanto.
 
 create index if not exists leads_nutricionista_criado_em_idx
 on public.leads_nutricionista (criado_em desc);

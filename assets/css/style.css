@@ -658,6 +658,13 @@ textarea:focus {
   margin-top: 2px;
 }
 
+.consent a {
+  color: var(--color-secondary);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .form-feedback {
   min-height: 24px;
   margin-bottom: 14px;
@@ -715,6 +722,28 @@ textarea:focus {
 
 .site-footer .footer-note {
   color: rgba(244, 239, 225, 0.72);
+}
+
+.privacy-section {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.privacy-content {
+  max-width: 860px;
+}
+
+.privacy-content h1 {
+  margin-bottom: 24px;
+}
+
+.privacy-content h2 {
+  margin-top: 34px;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.privacy-content p {
+  color: var(--color-muted);
+  font-size: 1.03rem;
 }
 
 .whatsapp-float {
