@@ -1191,12 +1191,7 @@ body {
 }
 
 .section-soft {
-  background:
-    linear-gradient(rgba(255, 253, 247, 0.86), rgba(255, 253, 247, 0.86)),
-    url("../img/brand/pattern-glaubert-couto.png");
-  background-size: 500px auto;
-  background-position: right -190px center;
-  background-repeat: no-repeat;
+  background: var(--color-bg);
 }
 
 .section-kicker h2,
