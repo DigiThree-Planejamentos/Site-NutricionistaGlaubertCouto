@@ -4,7 +4,8 @@ window.APP_CONFIG = {
     nome: "Glaubert Couto",
     profissao: "Nutricionista",
     instagram: "gcoutonutri",
-    whatsapp: "5524999242551"
+    whatsapp: "5524999242551",
+    email: ""
   },
   textos: {
     conceito: "Escuta que transforma, cuidado que permanece",

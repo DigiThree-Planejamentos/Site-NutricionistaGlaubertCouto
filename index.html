@@ -39,18 +39,18 @@
     <section class="hero section" id="inicio">
       <div class="container">
         <div class="hero-title">
-          <p class="eyebrow">Cuidado nutricional com clareza e escuta</p>
-          <h1 class="hero-title-animated">Nutrição personalizada para transformar sua relação com a alimentação</h1>
+          <p class="eyebrow" data-cms="hero.subtitulo">Cuidado nutricional com clareza e escuta</p>
+          <h1 class="hero-title-animated" data-cms="hero.titulo">Nutrição personalizada para transformar sua relação com a alimentação</h1>
         </div>
 
         <div class="hero-grid">
           <div class="hero-content reveal">
-            <p class="hero-text">
+            <p class="hero-text" data-cms="hero.conteudo">
               Com orientação profissional, acolhimento e estratégia, o Nutricionista Glaubert Couto constrói planos alimentares possíveis para sua rotina, seus objetivos e sua vida real.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary btn-animated" href="#agendamento"><span>Realizar cadastro</span></a>
-              <a class="btn btn-outline btn-animated js-whatsapp-link" href="#" target="_blank" rel="noopener"><span>Falar pelo WhatsApp</span></a>
+              <a class="btn btn-primary btn-animated" data-cms-href="hero.primaryButtonLink" href="#agendamento"><span data-cms="hero.primaryButtonText">Realizar cadastro</span></a>
+              <a class="btn btn-outline btn-animated js-whatsapp-link" data-cms-href="hero.secondaryButtonLink" href="#" target="_blank" rel="noopener"><span data-cms="hero.secondaryButtonText">Falar pelo WhatsApp</span></a>
             </div>
             <div class="hero-notes" aria-label="Diferenciais do atendimento">
               <span>Plano alimentar possível</span>
@@ -76,10 +76,10 @@
     <section class="section section-soft" id="sobre">
       <div class="container split">
         <div class="section-kicker reveal">
-          <p class="eyebrow">Sobre o Glaubert</p>
-          <h2>Um atendimento que começa entendendo sua rotina</h2>
+          <p class="eyebrow" data-cms="sobre.subtitulo">Sobre o Glaubert</p>
+          <h2 data-cms="sobre.titulo">Um atendimento que começa entendendo sua rotina</h2>
         </div>
-        <div class="text-stack reveal">
+        <div class="text-stack reveal" data-cms-rich="sobre.conteudo">
           <p>
             Glaubert Couto é nutricionista e acredita que um bom plano alimentar precisa considerar a rotina, a história e as possibilidades de cada pessoa. O atendimento é personalizado, com escuta atenta e orientação clara.
           </p>
@@ -330,14 +330,14 @@
         <a class="brand footer-brand" href="#inicio">
           <img class="brand-logo brand-logo-horizontal" src="assets/img/brand/logo-glaubert-couto-horizontal.png" alt="Glaubert Couto Nutricionista" width="150" height="70">
         </a>
-        <p>Nutricionista</p>
+        <p data-cms="general.footerText">Nutricionista</p>
       </div>
       <div class="footer-links">
-        <a class="js-instagram-link" href="#" target="_blank" rel="noopener">Instagram @gcoutonutri</a>
+        <a class="js-instagram-link" href="#" target="_blank" rel="noopener" data-cms="general.instagramLabel">Instagram @gcoutonutri</a>
         <a class="js-whatsapp-link" href="#" target="_blank" rel="noopener">WhatsApp</a>
         <a href="politica-privacidade.html">Política de Privacidade</a>
       </div>
-      <p class="footer-note">
+      <p class="footer-note" data-cms="general.privacyNotice">
         As informações enviadas pelo formulário serão usadas para contato, pré-agendamento e acompanhamento inicial da solicitação, conforme autorização do usuário e nossa Política de Privacidade.
       </p>
     </div>
@@ -352,6 +352,7 @@
   <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/content-loader.js"></script>
   <script src="assets/js/form.js"></script>
   <script src="assets/js/main.js"></script>
 </body>

@@ -88,6 +88,80 @@ whatsapp: "5524000000000"
 4. Se o Supabase confirmar o insert, a mensagem é montada automaticamente.
 5. O usuário é redirecionado para o WhatsApp via `wa.me`.
 
+## Painel administrativo - Fase 1
+
+O projeto inclui um painel simples em `admin.html` para editar conteúdos principais do site sem mexer no código.
+
+Nesta fase, o painel permite editar:
+
+- Título, subtítulo e texto de apoio do Hero.
+- Texto dos botões do Hero.
+- WhatsApp, Instagram e e-mail.
+- Título, subtítulo e texto principal da seção Sobre.
+- Texto curto do rodapé.
+
+Ainda não foram implementados upload de imagens, painel de leads, edição de cores, edição dinâmica de campos do formulário ou exclusão de conteúdo.
+
+### Como configurar o CMS no Supabase
+
+1. Acesse o Supabase.
+2. Abra **SQL Editor**.
+3. Execute o conteúdo atualizado de `database.sql`.
+4. Confirme que as tabelas abaixo foram criadas:
+   - `admin_users`
+   - `site_settings`
+   - `site_sections`
+5. Confirme que as funções abaixo existem:
+   - `is_admin()`
+   - `is_content_editor()`
+
+### Como criar o primeiro admin
+
+1. No Supabase, acesse **Authentication > Users**.
+2. Clique em **Add user**.
+3. Crie um usuário com e-mail e senha.
+4. Copie o `User UID` criado.
+5. No **SQL Editor**, rode:
+
+```sql
+insert into public.admin_users (user_id, email, nome, role, ativo)
+values (
+  'COLE_AQUI_O_USER_UID',
+  'email-do-admin@exemplo.com',
+  'Nome do Admin',
+  'owner',
+  true
+);
+```
+
+Use `owner` para o primeiro administrador. Depois, novos perfis podem usar `editor` ou `viewer`.
+
+### Como acessar o painel
+
+Abra:
+
+```text
+/admin.html
+```
+
+O login usa Supabase Auth com e-mail e senha. Se o usuário existir no Auth, mas não estiver ativo em `admin_users`, o painel bloqueia o acesso e faz logout.
+
+### Como o site público carrega conteúdo
+
+O arquivo `assets/js/content-loader.js` tenta carregar `site_settings` e `site_sections` do Supabase usando a chave `anon public`.
+
+Se o Supabase falhar ou não houver conteúdo cadastrado, o HTML original continua aparecendo como fallback. O formulário de leads não foi alterado.
+
+### Regras de segurança do painel
+
+- Não use `service_role` no frontend.
+- Não coloque senhas fixas no código.
+- Apenas usuários ativos em `admin_users` acessam o painel.
+- Apenas roles `owner` e `editor` podem salvar conteúdo.
+- Role `viewer` pode visualizar, mas não editar.
+- A tabela `leads_nutricionista` continua sem `SELECT` público.
+- Qualquer conteúdo textual renderizado pelo CMS é aplicado com `textContent`, não como HTML livre.
+
 ## Como subir para o GitHub
 
 ```bash

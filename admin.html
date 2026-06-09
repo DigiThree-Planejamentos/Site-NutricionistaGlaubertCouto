@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel Administrativo | Glaubert Couto</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon/favicon.png">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="login-view" id="login-view">
+      <div class="login-card">
+        <p class="eyebrow">Painel administrativo</p>
+        <h1>Entrar</h1>
+        <form id="login-form" class="admin-form">
+          <label>
+            E-mail
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+          <label>
+            Senha
+            <input type="password" name="password" autocomplete="current-password" required>
+          </label>
+          <button class="admin-button" type="submit" id="login-button">Acessar painel</button>
+          <p class="admin-feedback" id="login-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel-view is-hidden" id="panel-view">
+      <aside class="sidebar">
+        <div>
+          <p class="eyebrow">CMS</p>
+          <h2>Glaubert Couto</h2>
+        </div>
+        <nav aria-label="Menu do painel">
+          <a href="#dashboard" class="is-active">Dashboard</a>
+          <a href="#hero">Hero</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#configuracoes">Configuracoes</a>
+        </nav>
+      </aside>
+
+      <div class="panel-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Conteudo do site</p>
+            <h1>Edicao principal</h1>
+          </div>
+          <div class="user-box">
+            <span id="admin-user-label">Carregando...</span>
+            <button class="ghost-button" type="button" id="logout-button">Sair</button>
+          </div>
+        </header>
+
+        <section class="dashboard-grid" id="dashboard">
+          <article class="summary-card">
+            <span>Status</span>
+            <strong id="admin-status">Autenticado</strong>
+          </article>
+          <article class="summary-card">
+            <span>Permissao</span>
+            <strong id="admin-role">-</strong>
+          </article>
+          <article class="summary-card">
+            <span>Ultima carga</span>
+            <strong id="admin-loaded-at">-</strong>
+          </article>
+        </section>
+
+        <form class="content-form" id="content-form">
+          <section class="panel-section" id="hero">
+            <div class="section-title">
+              <p class="eyebrow">Hero</p>
+              <h2>Chamada principal</h2>
+            </div>
+            <div class="form-grid">
+              <label class="full">
+                Subtitulo do Hero
+                <input type="text" name="hero_subtitle">
+              </label>
+              <label class="full">
+                Titulo do Hero
+                <textarea name="hero_title" rows="3"></textarea>
+              </label>
+              <label class="full">
+                Texto de apoio
+                <textarea name="hero_content" rows="4"></textarea>
+              </label>
+              <label>
+                Texto do botao principal
+                <input type="text" name="hero_primary_button_text">
+              </label>
+              <label>
+                Link do botao principal
+                <input type="text" name="hero_primary_button_link">
+              </label>
+              <label>
+                Texto do botao secundario
+                <input type="text" name="hero_secondary_button_text">
+              </label>
+              <label>
+                Link do botao secundario
+                <input type="text" name="hero_secondary_button_link">
+              </label>
+            </div>
+          </section>
+
+          <section class="panel-section" id="sobre">
+            <div class="section-title">
+              <p class="eyebrow">Sobre</p>
+              <h2>Textos principais</h2>
+            </div>
+            <div class="form-grid">
+              <label class="full">
+                Subtitulo da secao
+                <input type="text" name="about_subtitle">
+              </label>
+              <label class="full">
+                Titulo da secao
+                <input type="text" name="about_title">
+              </label>
+              <label class="full">
+                Texto principal
+                <textarea name="about_content" rows="8"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="panel-section" id="configuracoes">
+            <div class="section-title">
+              <p class="eyebrow">Configuracoes</p>
+              <h2>Dados gerais</h2>
+            </div>
+            <div class="form-grid">
+              <label>
+                WhatsApp
+                <input type="text" name="whatsapp">
+              </label>
+              <label>
+                Instagram
+                <input type="text" name="instagram">
+              </label>
+              <label>
+                E-mail
+                <input type="email" name="email">
+              </label>
+              <label class="full">
+                Texto curto do rodape
+                <input type="text" name="footer_text">
+              </label>
+            </div>
+          </section>
+
+          <div class="sticky-actions">
+            <p class="admin-feedback" id="content-feedback" role="status" aria-live="polite"></p>
+            <button class="admin-button" type="submit" id="save-button">Salvar alteracoes</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+  <script src="assets/js/admin-content.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
