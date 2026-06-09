@@ -12,7 +12,7 @@
   });
 
   async function loadPublicContent() {
-    const [settingsResult, sectionsResult] = await Promise.all([
+    const [settingsResult, sectionsResult, blocksResult] = await Promise.all([
       client
         .from("site_settings")
         .select("chave,valor")
@@ -23,7 +23,13 @@
         .from("site_sections")
         .select("chave,titulo,subtitulo,conteudo,metadata")
         .in("chave", ["hero", "sobre"])
+        .eq("ativo", true),
+      client
+        .from("site_blocks")
+        .select("section_key,tipo,titulo,subtitulo,conteudo,icone,imagem_url,botao_texto,botao_link,ordem,metadata")
+        .in("section_key", ["diferenciais", "protocolos", "beneficios", "como_funciona"])
         .eq("ativo", true)
+        .order("ordem", { ascending: true })
     ]);
 
     if (settingsResult.error) {
@@ -34,22 +40,36 @@
       throw sectionsResult.error;
     }
 
-    const content = normalizeContent(settingsResult.data, sectionsResult.data || []);
+    if (blocksResult.error) {
+      throw blocksResult.error;
+    }
+
+    const content = normalizeContent(settingsResult.data, sectionsResult.data || [], blocksResult.data || []);
     applyGeneral(content.general);
     applyTextContent(content);
     applyLinks(content);
+    applyBlocks(content.blocks);
     updateExternalLinks();
   }
 
-  function normalizeContent(settings, sections) {
+  function normalizeContent(settings, sections, blocks) {
     const normalized = {
       general: settings && settings.valor ? settings.valor : {},
       hero: {},
-      sobre: {}
+      sobre: {},
+      blocks: {}
     };
 
     sections.forEach(function (section) {
       normalized[section.chave] = Object.assign({}, section, section.metadata || {});
+    });
+
+    blocks.forEach(function (block) {
+      if (!normalized.blocks[block.section_key]) {
+        normalized.blocks[block.section_key] = [];
+      }
+
+      normalized.blocks[block.section_key].push(block);
     });
 
     normalized.general.instagramLabel = normalized.general.instagram
@@ -104,6 +124,77 @@
 
       element.href = value;
     });
+  }
+
+  function applyBlocks(blocksBySection) {
+    if (!blocksBySection) return;
+
+    Object.keys(blocksBySection).forEach(function (sectionKey) {
+      const container = document.querySelector(`[data-cms-blocks="${sectionKey}"]`);
+      const blocks = blocksBySection[sectionKey] || [];
+
+      if (!container || !blocks.length) return;
+
+      container.textContent = "";
+      blocks.forEach(function (block, index) {
+        container.appendChild(createBlockElement(sectionKey, block, index));
+      });
+    });
+  }
+
+  function createBlockElement(sectionKey, block, index) {
+    if (sectionKey === "beneficios") {
+      return createBenefitCard(block, index);
+    }
+
+    if (sectionKey === "como_funciona") {
+      return createStep(block, index);
+    }
+
+    return createTag(block);
+  }
+
+  function createTag(block) {
+    const span = document.createElement("span");
+    span.textContent = block.titulo || block.conteudo || "";
+    return span;
+  }
+
+  function createBenefitCard(block, index) {
+    const article = document.createElement("article");
+    article.className = "benefit-card reveal is-visible";
+
+    const icon = document.createElement("span");
+    icon.className = "card-icon";
+    icon.textContent = block.icone || String(index + 1).padStart(2, "0");
+
+    const title = document.createElement("h3");
+    title.textContent = block.titulo || "";
+
+    const text = document.createElement("p");
+    text.textContent = block.conteudo || block.subtitulo || "";
+
+    article.append(icon, title, text);
+    return article;
+  }
+
+  function createStep(block, index) {
+    const item = document.createElement("li");
+    item.className = "reveal is-visible";
+
+    const marker = document.createElement("span");
+    marker.textContent = block.icone || String(index + 1);
+
+    const content = document.createElement("div");
+    const title = document.createElement("h3");
+    const text = document.createElement("p");
+
+    title.textContent = block.titulo || "";
+    text.textContent = block.conteudo || block.subtitulo || "";
+    content.append(title, text);
+    item.append(marker, content);
+
+    return item;
   }
 
   function updateExternalLinks() {

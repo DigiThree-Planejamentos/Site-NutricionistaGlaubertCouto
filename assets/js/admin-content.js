@@ -109,6 +109,78 @@
     return loadContent(client);
   }
 
+  async function loadBlocks(client) {
+    const { data, error } = await client
+      .from("site_blocks")
+      .select("id,section_key,tipo,titulo,subtitulo,conteudo,icone,imagem_url,botao_texto,botao_link,ordem,ativo,metadata,atualizado_em")
+      .order("section_key", { ascending: true })
+      .order("ordem", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return data || [];
+  }
+
+  async function saveBlock(client, form, userId) {
+    const formData = new FormData(form);
+    const id = getValue(formData, "id");
+    const payload = {
+      section_key: getValue(formData, "section_key"),
+      tipo: getValue(formData, "tipo") || "card",
+      titulo: getValue(formData, "titulo"),
+      subtitulo: getOptionalValue(formData, "subtitulo"),
+      conteudo: getOptionalValue(formData, "conteudo"),
+      icone: getOptionalValue(formData, "icone"),
+      imagem_url: getOptionalValue(formData, "imagem_url"),
+      botao_texto: getOptionalValue(formData, "botao_texto"),
+      botao_link: getOptionalValue(formData, "botao_link"),
+      ordem: Number(getValue(formData, "ordem") || 0),
+      ativo: formData.get("ativo") === "on",
+      metadata: {},
+      atualizado_em: new Date().toISOString(),
+      atualizado_por: userId || null
+    };
+
+    if (!payload.section_key) {
+      throw new Error("Selecione a secao do bloco.");
+    }
+
+    if (!payload.titulo) {
+      throw new Error("Informe o titulo do bloco.");
+    }
+
+    const query = id
+      ? client.from("site_blocks").update(payload).eq("id", id)
+      : client.from("site_blocks").insert([payload]);
+
+    const { error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    return loadBlocks(client);
+  }
+
+  async function toggleBlock(client, block, userId) {
+    const { error } = await client
+      .from("site_blocks")
+      .update({
+        ativo: !block.ativo,
+        atualizado_em: new Date().toISOString(),
+        atualizado_por: userId || null
+      })
+      .eq("id", block.id);
+
+    if (error) {
+      throw error;
+    }
+
+    return loadBlocks(client);
+  }
+
   function fillForm(form, content) {
     const hero = content.sections.hero || {};
     const about = content.sections.sobre || {};
@@ -135,6 +207,11 @@
     return String(formData.get(field) || "").trim();
   }
 
+  function getOptionalValue(formData, field) {
+    const value = getValue(formData, field);
+    return value || null;
+  }
+
   function setValue(form, field, value) {
     const input = form.elements[field];
     if (input) {
@@ -145,6 +222,9 @@
   window.AdminContent = {
     loadContent,
     saveContent,
-    fillForm
+    fillForm,
+    loadBlocks,
+    saveBlock,
+    toggleBlock
   };
 })();

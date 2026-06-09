@@ -39,6 +39,7 @@
           <a href="#dashboard" class="is-active">Dashboard</a>
           <a href="#hero">Hero</a>
           <a href="#sobre">Sobre</a>
+          <a href="#blocos">Blocos</a>
           <a href="#configuracoes">Configuracoes</a>
         </nav>
       </aside>
@@ -159,6 +160,95 @@
             <button class="admin-button" type="submit" id="save-button">Salvar alteracoes</button>
           </div>
         </form>
+
+        <section class="panel-section blocks-manager" id="blocos">
+          <div class="section-title section-title-row">
+            <div>
+              <p class="eyebrow">Blocos repetiveis</p>
+              <h2>Cards, protocolos e passos</h2>
+            </div>
+            <button class="admin-button" type="button" id="new-block-button">Novo item</button>
+          </div>
+
+          <div class="blocks-layout">
+            <div class="blocks-list-panel">
+              <label>
+                Secao
+                <select id="block-section-filter">
+                  <option value="beneficios">Beneficios</option>
+                  <option value="protocolos">Protocolos/servicos</option>
+                  <option value="como_funciona">Como funciona</option>
+                  <option value="diferenciais">Diferenciais</option>
+                </select>
+              </label>
+              <div class="blocks-list" id="blocks-list" aria-live="polite"></div>
+            </div>
+
+            <form class="block-form" id="block-form">
+              <input type="hidden" name="id">
+              <div class="form-grid">
+                <label>
+                  Secao
+                  <select name="section_key" required>
+                    <option value="beneficios">Beneficios</option>
+                    <option value="protocolos">Protocolos/servicos</option>
+                    <option value="como_funciona">Como funciona</option>
+                    <option value="diferenciais">Diferenciais</option>
+                  </select>
+                </label>
+                <label>
+                  Tipo
+                  <select name="tipo" required>
+                    <option value="card">Card</option>
+                    <option value="tag">Tag</option>
+                    <option value="step">Passo</option>
+                  </select>
+                </label>
+                <label class="full">
+                  Titulo
+                  <input type="text" name="titulo" required>
+                </label>
+                <label>
+                  Subtitulo
+                  <input type="text" name="subtitulo">
+                </label>
+                <label>
+                  Icone/numero
+                  <input type="text" name="icone">
+                </label>
+                <label class="full">
+                  Conteudo
+                  <textarea name="conteudo" rows="4"></textarea>
+                </label>
+                <label>
+                  Imagem URL
+                  <input type="text" name="imagem_url">
+                </label>
+                <label>
+                  Ordem
+                  <input type="number" name="ordem" min="0" step="1" required>
+                </label>
+                <label>
+                  Texto do botao
+                  <input type="text" name="botao_texto">
+                </label>
+                <label>
+                  Link do botao
+                  <input type="text" name="botao_link">
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="ativo" checked>
+                  <span>Item ativo</span>
+                </label>
+              </div>
+              <div class="block-actions">
+                <p class="admin-feedback" id="blocks-feedback" role="status" aria-live="polite"></p>
+                <button class="ghost-button" type="button" id="cancel-block-button">Cancelar</button>
+                <button class="admin-button" type="submit" id="save-block-button">Salvar item</button>
+              </div>
+            </form>
+          </div>
+        </section>
       </div>
     </section>
   </main>
