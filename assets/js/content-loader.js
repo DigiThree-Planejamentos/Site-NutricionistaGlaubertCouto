@@ -184,10 +184,6 @@
       if (fallback) {
         image.src = fallback;
       }
-
-      if (image.hasAttribute("data-site-asset-img") && image.getAttribute("data-site-asset-img") === "about_image") {
-        image.hidden = true;
-      }
     };
 
     image.src = url;
