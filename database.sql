@@ -148,10 +148,28 @@ create table if not exists public.site_blocks (
   atualizado_por uuid references auth.users(id)
 );
 
+create table if not exists public.site_assets (
+  id uuid primary key default gen_random_uuid(),
+  chave text not null unique,
+  nome text not null,
+  url text not null,
+  bucket text not null default 'site-assets',
+  path text not null,
+  tipo text not null,
+  mime_type text,
+  tamanho bigint,
+  ativo boolean not null default true,
+  criado_em timestamp with time zone not null default now(),
+  atualizado_em timestamp with time zone not null default now(),
+  criado_por uuid references auth.users(id),
+  atualizado_por uuid references auth.users(id)
+);
+
 alter table public.admin_users enable row level security;
 alter table public.site_settings enable row level security;
 alter table public.site_sections enable row level security;
 alter table public.site_blocks enable row level security;
+alter table public.site_assets enable row level security;
 
 create or replace function public.is_admin()
 returns boolean
@@ -191,9 +209,11 @@ grant usage on schema public to anon, authenticated;
 grant select on public.site_settings to anon, authenticated;
 grant select on public.site_sections to anon, authenticated;
 grant select on public.site_blocks to anon, authenticated;
+grant select on public.site_assets to anon, authenticated;
 grant select, insert, update on public.site_settings to authenticated;
 grant select, insert, update on public.site_sections to authenticated;
 grant select, insert, update on public.site_blocks to authenticated;
+grant select, insert, update on public.site_assets to authenticated;
 grant select on public.admin_users to authenticated;
 
 drop policy if exists "Admins podem ver admins ativos" on public.admin_users;
@@ -211,6 +231,10 @@ drop policy if exists "Blocos ativos podem ser lidos" on public.site_blocks;
 drop policy if exists "Admins podem ler blocos" on public.site_blocks;
 drop policy if exists "Editores podem inserir blocos" on public.site_blocks;
 drop policy if exists "Editores podem atualizar blocos" on public.site_blocks;
+drop policy if exists "Assets ativos podem ser lidos" on public.site_assets;
+drop policy if exists "Admins podem ler assets" on public.site_assets;
+drop policy if exists "Editores podem inserir assets" on public.site_assets;
+drop policy if exists "Editores podem atualizar assets" on public.site_assets;
 
 create policy "Admins podem ver admins ativos"
 on public.admin_users
@@ -295,6 +319,81 @@ with check (public.is_content_editor());
 
 create index if not exists site_blocks_section_order_idx
 on public.site_blocks (section_key, ativo, ordem);
+
+create policy "Assets ativos podem ser lidos"
+on public.site_assets
+for select
+to anon, authenticated
+using (ativo = true);
+
+create policy "Admins podem ler assets"
+on public.site_assets
+for select
+to authenticated
+using (public.is_admin());
+
+create policy "Editores podem inserir assets"
+on public.site_assets
+for insert
+to authenticated
+with check (public.is_content_editor());
+
+create policy "Editores podem atualizar assets"
+on public.site_assets
+for update
+to authenticated
+using (public.is_content_editor())
+with check (public.is_content_editor());
+
+create index if not exists site_assets_chave_ativo_idx
+on public.site_assets (chave, ativo);
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'site-assets',
+  'site-assets',
+  true,
+  2097152,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/x-icon', 'image/vnd.microsoft.icon']
+)
+on conflict (id) do update
+set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Publico pode ver imagens do site" on storage.objects;
+drop policy if exists "Editores podem enviar imagens do site" on storage.objects;
+drop policy if exists "Editores podem atualizar imagens do site" on storage.objects;
+drop policy if exists "Editores podem remover imagens do site" on storage.objects;
+
+create policy "Publico pode ver imagens do site"
+on storage.objects
+for select
+to anon, authenticated
+using (bucket_id = 'site-assets');
+
+create policy "Editores podem enviar imagens do site"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'site-assets'
+  and public.is_content_editor()
+);
+
+create policy "Editores podem atualizar imagens do site"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'site-assets'
+  and public.is_content_editor()
+)
+with check (
+  bucket_id = 'site-assets'
+  and public.is_content_editor()
+);
 
 insert into public.site_settings (chave, valor, tipo, publico)
 values

@@ -12,7 +12,7 @@
   });
 
   async function loadPublicContent() {
-    const [settingsResult, sectionsResult, blocksResult] = await Promise.all([
+    const [settingsResult, sectionsResult, blocksResult, assetsResult] = await Promise.all([
       client
         .from("site_settings")
         .select("chave,valor")
@@ -29,7 +29,11 @@
         .select("section_key,tipo,titulo,subtitulo,conteudo,icone,imagem_url,botao_texto,botao_link,ordem,metadata")
         .in("section_key", ["diferenciais", "protocolos", "beneficios", "como_funciona"])
         .eq("ativo", true)
-        .order("ordem", { ascending: true })
+        .order("ordem", { ascending: true }),
+      client
+        .from("site_assets")
+        .select("chave,url,nome,tipo")
+        .eq("ativo", true)
     ]);
 
     if (settingsResult.error) {
@@ -44,20 +48,31 @@
       throw blocksResult.error;
     }
 
-    const content = normalizeContent(settingsResult.data, sectionsResult.data || [], blocksResult.data || []);
+    if (assetsResult.error) {
+      console.warn("Imagens dinamicas indisponiveis. Usando fallback local.", assetsResult.error);
+    }
+
+    const content = normalizeContent(
+      settingsResult.data,
+      sectionsResult.data || [],
+      blocksResult.data || [],
+      assetsResult.error ? [] : assetsResult.data || []
+    );
     applyGeneral(content.general);
+    applyAssets(content.assets);
     applyTextContent(content);
     applyLinks(content);
     applyBlocks(content.blocks);
     updateExternalLinks();
   }
 
-  function normalizeContent(settings, sections, blocks) {
+  function normalizeContent(settings, sections, blocks, assets) {
     const normalized = {
       general: settings && settings.valor ? settings.valor : {},
       hero: {},
       sobre: {},
-      blocks: {}
+      blocks: {},
+      assets: {}
     };
 
     sections.forEach(function (section) {
@@ -70,6 +85,10 @@
       }
 
       normalized.blocks[block.section_key].push(block);
+    });
+
+    assets.forEach(function (asset) {
+      normalized.assets[asset.chave] = asset;
     });
 
     normalized.general.instagramLabel = normalized.general.instagram
@@ -126,6 +145,55 @@
     });
   }
 
+  function applyAssets(assets) {
+    if (!assets) return;
+
+    document.querySelectorAll("[data-site-asset-img]").forEach(function (image) {
+      const key = image.getAttribute("data-site-asset-img");
+      const asset = assets[key];
+
+      if (!asset || !asset.url) return;
+
+      applyImageAsset(image, asset.url);
+    });
+
+    document.querySelectorAll("[data-site-asset-link]").forEach(function (link) {
+      const key = link.getAttribute("data-site-asset-link");
+      const asset = assets[key];
+
+      if (!asset || !asset.url) return;
+
+      link.href = asset.url;
+    });
+
+    document.querySelectorAll("[data-site-asset-meta]").forEach(function (meta) {
+      const key = meta.getAttribute("data-site-asset-meta");
+      const asset = assets[key];
+
+      if (!asset || !asset.url) return;
+
+      meta.setAttribute("content", asset.url);
+    });
+  }
+
+  function applyImageAsset(image, url) {
+    const fallback = image.getAttribute("src") || "";
+
+    image.onerror = function () {
+      image.onerror = null;
+      if (fallback) {
+        image.src = fallback;
+      }
+
+      if (image.hasAttribute("data-site-asset-img") && image.getAttribute("data-site-asset-img") === "about_image") {
+        image.hidden = true;
+      }
+    };
+
+    image.src = url;
+    image.hidden = false;
+  }
+
   function applyBlocks(blocksBySection) {
     if (!blocksBySection) return;
 
@@ -167,6 +235,18 @@
     const icon = document.createElement("span");
     icon.className = "card-icon";
     icon.textContent = block.icone || String(index + 1).padStart(2, "0");
+
+    if (block.imagem_url) {
+      const image = document.createElement("img");
+      image.className = "benefit-card-image";
+      image.src = block.imagem_url;
+      image.alt = block.titulo || "";
+      image.loading = "lazy";
+      image.onerror = function () {
+        image.remove();
+      };
+      article.appendChild(image);
+    }
 
     const title = document.createElement("h3");
     title.textContent = block.titulo || "";

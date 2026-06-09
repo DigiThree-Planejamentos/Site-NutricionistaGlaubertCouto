@@ -12,6 +12,8 @@
   const blocksList = document.querySelector("#blocks-list");
   const blockForm = document.querySelector("#block-form");
   const blocksFeedback = document.querySelector("#blocks-feedback");
+  const mediaGrid = document.querySelector("#media-grid");
+  const mediaFeedback = document.querySelector("#media-feedback");
   const newBlockButton = document.querySelector("#new-block-button");
   const cancelBlockButton = document.querySelector("#cancel-block-button");
   const saveBlockButton = document.querySelector("#save-block-button");
@@ -23,6 +25,51 @@
   let authorizedAdmin;
   let currentContent;
   let currentBlocks = [];
+  let currentAssets = [];
+  const mediaItems = [
+    {
+      key: "header_logo",
+      label: "Logo do header",
+      description: "Usada no topo do site, dentro do menu principal.",
+      fallback: "assets/img/brand/logo-glaubert-couto-horizontal.png",
+      type: "logo"
+    },
+    {
+      key: "footer_logo",
+      label: "Logo do footer",
+      description: "Usada no rodape do site.",
+      fallback: "assets/img/brand/logo-glaubert-couto-horizontal.png",
+      type: "logo"
+    },
+    {
+      key: "favicon",
+      label: "Favicon",
+      description: "Icone exibido na aba do navegador e atalhos.",
+      fallback: "assets/img/favicon/favicon.png",
+      type: "favicon"
+    },
+    {
+      key: "hero_image",
+      label: "Imagem principal do Hero",
+      description: "Foto principal exibida na primeira dobra do site.",
+      fallback: "assets/img/glaubert-couto.png",
+      type: "image"
+    },
+    {
+      key: "about_image",
+      label: "Imagem da secao Sobre",
+      description: "Imagem opcional exibida abaixo do texto da secao Sobre.",
+      fallback: "assets/img/glaubert-couto.png",
+      type: "image"
+    },
+    {
+      key: "og_image",
+      label: "Open Graph image",
+      description: "Imagem usada no compartilhamento do link em redes sociais.",
+      fallback: "assets/img/glaubert-couto.png",
+      type: "social"
+    }
+  ];
 
   init();
 
@@ -55,6 +102,7 @@
       newBlockButton.disabled = true;
       setFeedback(contentFeedback, "Seu usuario pode visualizar, mas nao editar conteudo.", "error");
       setFeedback(blocksFeedback, "Seu usuario pode visualizar, mas nao editar blocos.", "error");
+      setFeedback(mediaFeedback, "Seu usuario pode visualizar, mas nao enviar imagens.", "error");
     }
 
     await loadAndFill();
@@ -64,6 +112,13 @@
       resetBlockForm();
     } catch (error) {
       setFeedback(blocksFeedback, error.message || "Nao foi possivel carregar blocos.", "error");
+    }
+
+    try {
+      await loadAssetsAndRender();
+    } catch (error) {
+      renderMediaCards();
+      setFeedback(mediaFeedback, error.message || "Nao foi possivel carregar imagens.", "error");
     }
   }
 
@@ -84,6 +139,11 @@
   async function loadBlocksAndRender() {
     currentBlocks = await window.AdminContent.loadBlocks(client);
     renderBlocksList();
+  }
+
+  async function loadAssetsAndRender() {
+    currentAssets = await window.AdminContent.loadAssets(client);
+    renderMediaCards();
   }
 
   function renderBlocksList() {
@@ -195,6 +255,148 @@
       });
 
     return orders.length ? Math.max.apply(null, orders) + 1 : 1;
+  }
+
+  function renderMediaCards() {
+    mediaGrid.textContent = "";
+    mediaItems.forEach(function (item) {
+      mediaGrid.appendChild(createMediaCard(item));
+    });
+  }
+
+  function createMediaCard(item) {
+    const asset = getAsset(item.key);
+    const card = document.createElement("article");
+    card.className = "media-card";
+
+    const header = document.createElement("div");
+    header.className = "media-card-header";
+
+    const titleWrap = document.createElement("div");
+    const title = document.createElement("h3");
+    const description = document.createElement("p");
+    title.textContent = item.label;
+    description.textContent = item.description;
+    titleWrap.append(title, description);
+
+    const status = document.createElement("p");
+    status.textContent = asset ? "Supabase" : "Fallback local";
+    header.append(titleWrap, status);
+
+    const previews = document.createElement("div");
+    previews.className = "media-preview-grid";
+
+    const currentPreview = createPreview("Atual", asset ? asset.url : item.fallback);
+    const newPreview = createPreview("Nova", "");
+    previews.append(currentPreview.wrapper, newPreview.wrapper);
+
+    const actions = document.createElement("div");
+    actions.className = "media-actions";
+
+    const fileInput = document.createElement("input");
+    fileInput.className = "media-file";
+    fileInput.type = "file";
+    fileInput.accept = ".jpg,.jpeg,.png,.webp,.ico,image/jpeg,image/png,image/webp,image/x-icon";
+    fileInput.disabled = !authorizedAdmin.canEdit;
+
+    const row = document.createElement("div");
+    row.className = "media-actions-row";
+
+    const uploadButton = document.createElement("button");
+    uploadButton.className = "admin-button";
+    uploadButton.type = "button";
+    uploadButton.textContent = "Enviar imagem";
+    uploadButton.disabled = !authorizedAdmin.canEdit;
+
+    fileInput.addEventListener("change", function () {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      try {
+        window.AdminContent.validateAssetFile(file);
+        newPreview.image.src = URL.createObjectURL(file);
+        newPreview.image.hidden = false;
+        setFeedback(mediaFeedback, "Preview carregado. Clique em Enviar imagem para salvar.", "");
+      } catch (error) {
+        fileInput.value = "";
+        newPreview.image.hidden = true;
+        setFeedback(mediaFeedback, error.message, "error");
+      }
+    });
+
+    uploadButton.addEventListener("click", async function () {
+      const file = fileInput.files[0];
+
+      if (!file) {
+        setFeedback(mediaFeedback, "Selecione uma imagem antes de enviar.", "error");
+        return;
+      }
+
+      await handleUploadAsset(item, file, uploadButton, fileInput);
+    });
+
+    row.append(uploadButton);
+    actions.append(fileInput, row);
+    card.append(header, previews, actions);
+    return card;
+  }
+
+  function createPreview(label, src) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "media-preview";
+
+    const caption = document.createElement("span");
+    caption.textContent = label;
+
+    const frame = document.createElement("div");
+    frame.className = "media-preview-frame";
+
+    const image = document.createElement("img");
+    image.alt = label;
+    image.hidden = !src;
+
+    if (src) {
+      image.src = src;
+    }
+
+    frame.appendChild(image);
+    wrapper.append(caption, frame);
+
+    return { wrapper, image };
+  }
+
+  function getAsset(key) {
+    return currentAssets.find(function (asset) {
+      return asset.chave === key && asset.ativo !== false;
+    });
+  }
+
+  async function handleUploadAsset(item, file, button, fileInput) {
+    if (!authorizedAdmin || !authorizedAdmin.canEdit) {
+      setFeedback(mediaFeedback, "Voce nao tem permissao para enviar imagens.", "error");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Enviando...";
+    setFeedback(mediaFeedback, `Enviando ${item.label}...`, "");
+
+    try {
+      currentAssets = await window.AdminContent.uploadAsset(
+        client,
+        item,
+        file,
+        authorizedAdmin.session.user.id
+      );
+      fileInput.value = "";
+      renderMediaCards();
+      setFeedback(mediaFeedback, "Imagem salva com sucesso.", "success");
+    } catch (error) {
+      setFeedback(mediaFeedback, error.message || "Nao foi possivel enviar a imagem.", "error");
+    } finally {
+      button.disabled = !authorizedAdmin.canEdit;
+      button.textContent = "Enviar imagem";
+    }
   }
 
   loginForm.addEventListener("submit", async function (event) {
