@@ -5,6 +5,18 @@
 
   if (!form) return;
 
+  function trackEvent(eventName, params) {
+    if (typeof window.trackPaidTrafficEvent === "function") {
+      window.trackPaidTrafficEvent(eventName, params);
+    }
+  }
+
+  function trackCustomEvent(eventName, params) {
+    if (typeof window.trackPaidTrafficCustomEvent === "function") {
+      window.trackPaidTrafficCustomEvent(eventName, params);
+    }
+  }
+
   function getValue(formData, field) {
     return String(formData.get(field) || "").trim();
   }
@@ -92,6 +104,12 @@ Aguardo seu retorno para agendarmos.`;
     button.textContent = text;
   }
 
+  form.addEventListener("focusin", function () {
+    trackCustomEvent("LeadFormStarted", {
+      content_name: "Cadastro"
+    });
+  }, { once: true });
+
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -110,6 +128,10 @@ Aguardo seu retorno para agendarmos.`;
       setFeedback("Salvando suas informações com segurança...", "");
 
       await window.SupabaseLeadService.insertLead(lead);
+
+      trackEvent("Lead", {
+        content_name: "Cadastro"
+      });
 
       setFeedback("Dados salvos. Redirecionando para o WhatsApp...", "success");
       setTimeout(function () {

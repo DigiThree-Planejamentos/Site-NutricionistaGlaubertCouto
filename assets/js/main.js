@@ -9,6 +9,12 @@
   const instagramAnimations = document.querySelectorAll("[data-lottie-instagram]");
   const revealItems = document.querySelectorAll(".reveal");
 
+  function trackEvent(eventName, params) {
+    if (typeof window.trackPaidTrafficEvent === "function") {
+      window.trackPaidTrafficEvent(eventName, params);
+    }
+  }
+
   function setMenu(open) {
     document.body.classList.toggle("menu-open", open);
     if (menuToggle) {
@@ -33,6 +39,11 @@
   whatsappLinks.forEach(function (link) {
     const message = encodeURIComponent(config.textos.chamadaWhatsApp);
     link.href = `https://wa.me/${config.profissional.whatsapp}?text=${message}`;
+    link.addEventListener("click", function () {
+      trackEvent("Contact", {
+        content_name: "WhatsApp"
+      });
+    });
   });
 
   instagramLinks.forEach(function (link) {
